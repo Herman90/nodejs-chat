@@ -1,0 +1,23 @@
+<% layout('layout/layout') %>
+<% block('title', 'Login') %>
+
+<form action="\login" method="post" class="form-horizontal">
+    <fieldset>
+        <legend>Log In</legend>
+        <div class="control-group">
+            <label class="control-label" for="username">Username</label>
+
+            <div class="controls">
+                <input type="text" id="username" name="username" placeholder="UserName"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="password">Password</label>
+
+            <div class="controls">
+                <input type="password" id="password" name="password" placeholder="Password"/>
+            </div>
+        </div>
+        <input type="submit" class="btn" value="Login"/>
+    </fieldset>
+</form>

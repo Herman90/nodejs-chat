@@ -1,0 +1,42 @@
+body {
+  padding: 10px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.status{
+	background: #ccc;
+}
+
+#room ul{
+	list-style-type: none;
+	margin-left: 0;
+}
+
+#room ul li{
+	margin: 3px 0;
+	padding: 2px 1px;
+}
+
+#room .username{
+	margin-right: 5px;
+}
+
+#room .time{
+	margin-right: 8px;
+}
+
+#room .time:after{
+	content: ":";
+}
+
+#room input{
+	width: 100%;
+	box-sizing: border-box;
+	height: 40px;
+	font-size: 17px;
+	line-height: 20px;
+}

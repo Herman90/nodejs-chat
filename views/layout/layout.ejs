@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= blocks.title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
+    <!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">-->
+    <!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">-->
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.0.js"></script>
+    <!--<script type="text/javascript" src="http://documentcloud.github.io/underscore/underscore-min.js"></script>-->
+    <!--<script type="text/javascript" src="http://documentcloud.github.io/backbone/backbone-min.js"></script>-->
+    <!--<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>-->
+    <script src="/js/bootstrap.js"></script>
+    <!--<script src="/js/main.js"></script>-->
+    <script>
+        $(function(){
+            $('#logout_btn').on('click', function(){
+                $('<form action="\logout" method="POST"></form>').submit();
+                return false;
+            })
+        })
+    </script>
+</head>
+<body>
+<div class="navbar">
+    <div class="navbar-inner">
+        <a class="brand" href="#">CHAT</a>
+        <ul class="nav">
+            <li class=""><a href="\">На главную</a></li>
+            <% if(user){%>
+            <li class=""><a href="\chat">Chat</a></li>
+            <li class=""><a href="#" id="logout_btn" >Logout</a></li>
+            <%}else{%>
+            <li class="pull-right"><a href="\login" >Login</a></li>
+            <%}%>
+        </ul>
+    </div>
+</div>
+<h1><%= blocks.title %></h1>
+<%- body -%>
+</body>
+</html>

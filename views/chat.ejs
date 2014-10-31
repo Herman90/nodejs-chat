@@ -1,0 +1,113 @@
+<% layout('layout/layout') %>
+<% block('title', 'Chat') %>
+
+<p>Hello, <%= user.get('username') %></p>
+<div id="room">
+    <form class="form-vertical">
+        <div class="control-group">
+            <div class="controls">
+                <input type="text" placeholder="Message"/>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-small btn-primary">Send</button>
+
+
+    </form>
+    <p>
+    <ul>
+
+    </ul>
+    </p>
+</div>
+
+
+<p>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io.connect('', {
+            reconnect: false
+        });
+        var input = $('#room input');
+        var chat = $('#room ul')
+
+
+        socket.on('message', function (username, text) {
+            playSound();
+            printMessage(username, text);
+        })
+                .on('leave', function (username) {
+                    printStatus(username + " left");
+                })
+                .on('join', function (username) {
+                    printStatus(username + " join");
+                })
+                .on('logout', function () {
+                    location.href = "/";
+                })
+                .on('error', function (error) {
+                    if (error = 'handshake unauthorized') {
+                        printStatus("You have left the chat");
+                    } else {
+
+                    }
+
+                })
+                .on('connect', function () {
+                    $('#room form').on('submit', function (e) {
+                        e.preventDefault();
+                        sendMessage();
+                        return false;
+                    });
+                    input.prop('disabled', false);
+                })
+                .on('disconnect', function () {
+                    $('#room form').off('submit');
+                    input.prop('disabled', true);
+                    setTimeout(reconnect, 500);
+                });
+
+        function reconnect() {
+            socket.once('error', function () {
+                setTimeout(reconnect, 500);
+            });
+
+            socket.socket.connect();
+        }
+
+        function sendMessage() {
+            var text = input.val();
+            socket.emit('message', text, function () {
+                printMessage('я', text);
+            });
+            input.val('');
+            return false;
+        }
+
+        function printMessage(username, text) {
+            var user = $('<span class="label label-info username">').text(username)
+            $('<li></li>').append(user).append($('<span class="time">[' + getMessageTime() + ']</span>')).append(text).appendTo(chat);
+        }
+
+        function printStatus(text) {
+            $('<li class="status"></li>').text(text).appendTo(chat);
+        }
+
+        function showAlert(message) {
+            alert('message');
+        }
+
+        function getMessageTime() {
+            var date = new Date();
+            return date.toLocaleDateString() + '  ' + date.toLocaleTimeString();
+        }
+
+        function playSound() {
+
+            var audio = $('<audio id="audio1" src="/sounds/ring.mp3" controls preload="auto" autobuffer></audio>')[0];
+            audio.play();
+
+
+        }
+
+    </script>
+</p>

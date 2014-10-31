@@ -1,0 +1,81 @@
+var mongoose = require('libs/mongoose');
+var crypto = require('crypto');
+var async = require('async');
+var util = require('util');
+
+
+var Schema = mongoose.Schema;
+var userSchema = new Schema({
+	username: {
+		type: String,
+		unique: true,
+		required: true
+	},
+	hashedPassword: {
+		type: String,
+		required: true
+	},
+	salt: {
+		type: String,
+		required: true
+	},
+	created: {
+		type: Date,
+		default: Date.now
+	}
+});
+
+userSchema.methods.encryptPassword = function(password){
+	return crypto.createHmac("sha1", this.salt).update(password).digest('hex');
+}
+
+userSchema.statics.authorize = function(username, password, callback){
+	var User = this;
+	async.waterfall([
+		function(callback){
+			User.findOne({username: username}, callback);
+		},
+		function(user, callback){
+			if(user){
+				if(user.checkPassword(password)){
+					callback(null, user);
+				}else{
+					return callback(new AuthError("Password is incorrect"));
+				}
+			}else{
+				var user = new User({ username: username, password: password});
+				user.save(function(error, user){
+					if(error) return callback(error);
+					callback(null, user);
+				});
+			}
+		}
+	], callback)
+}
+
+userSchema.virtual('password')
+	.set(function(password){
+	this._plainPassword = password;
+	this.salt = Math.random() + '';
+	this.hashedPassword = this.encryptPassword(password);
+	})
+	.get(function(){
+		return this._plainPassword;
+	});
+
+userSchema.methods.checkPassword = function(password){
+	return this.encryptPassword(password) === this.hashedPassword;
+}
+
+exports.User = mongoose.model('User', userSchema);
+
+function AuthError(message){
+	Error.apply(this, arguments);
+	Error.captureStackTrace(this, HttpError);
+	this.message = message;
+}
+
+util.inherits(AuthError, Error);
+AuthError.prototype.name = 'AuthError';
+exports.AuthError = AuthError;
+
